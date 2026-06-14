@@ -5,7 +5,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-public_users.post("/register", (req,res) => {
+public_users.post("/register", (req, res) => {
 
   const username = req.body.username;
   const password = req.body.password;
@@ -101,17 +101,24 @@ public_users.get('/review/:isbn', function (req, res) {
 });
 
 // Task 10 - Get all books using Async/Await with Axios
-public_users.get('/async/books', async function (req, res) {
-
+const getBookList = async () => {
   try {
     const response = await axios.get('http://localhost:5000/');
-    return res.status(200).json(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+public_users.get('/async/books', async function (req, res) {
+  try {
+    const books = await getBookList();
+    return res.status(200).json(books);
   } catch (error) {
     return res.status(500).json({
       message: "Error retrieving books"
     });
   }
-
 });
 
 // Task 11 - Get books by ISBN using Promises
